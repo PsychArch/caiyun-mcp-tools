@@ -1,0 +1,46 @@
+# Git files
+.git
+.github
+.gitignore
+
+# Development files
+*.test.js
+test/
+tests/
+__tests__/
+coverage/
+.nyc_output/
+
+# CI configuration
+.travis.yml
+.circleci/
+.github/
+
+# Editor configuration
+.vscode/
+.idea/
+*.sublime-*
+.editorconfig
+
+# Other configuration files
+.eslintrc*
+.prettierrc*
+.babelrc*
+jest.config.js
+tsconfig.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env*
+
+# Documentation that doesn't need to be published
+docs/
+*.md
+!README.md
+
+# Examples that don't need to be in the package
+examples/ 
