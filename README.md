@@ -7,7 +7,6 @@ This is a Model Context Protocol (MCP) server for the Caiyun Weather API. It pro
 - Real-time weather conditions
 - Hourly weather forecasts (up to 72 hours)
 - Daily weather forecasts (up to 7 days)
-- Historical weather data
 - Weather alerts
 - Support for multiple languages (Chinese, English, Japanese)
 - Token-efficient compact response format
@@ -59,18 +58,15 @@ The server provides the following tools which can be accessed through Cursor:
      - `dailysteps` (optional number): Number of daily forecasts to return (max: 7)
      - `lang` (optional string): Language for response ("zh_CN", "en_US", or "ja"), defaults to "zh_CN"
 
-4. **historical-weather** - Get historical weather data
+4. **weather-alerts** - Get active weather alerts
    - Parameters:
      - `longitude` (number): Longitude coordinate
      - `latitude` (number): Latitude coordinate
-     - `begin` (number): Unix timestamp of the starting point for historical data
      - `lang` (optional string): Language for response ("zh_CN", "en_US", or "ja"), defaults to "zh_CN"
 
-5. **weather-alerts** - Get active weather alerts
-   - Parameters:
-     - `longitude` (number): Longitude coordinate
-     - `latitude` (number): Latitude coordinate
-     - `lang` (optional string): Language for response ("zh_CN", "en_US", or "ja"), defaults to "zh_CN"
+## API Limitations
+
+Per the official Caiyun Weather API documentation: "The API interface only supports returning historical data for the past day." Due to this limitation, the historical weather tool has been removed from this package.
      
 ## Contributing
 

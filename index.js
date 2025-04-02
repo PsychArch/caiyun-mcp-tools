@@ -63,14 +63,15 @@ async function callCaiyunApi(endpoint, longitude, latitude, params = {}) {
 
 // Create MCP server
 const server = new McpServer({
-  name: "caiyun-weather",
-  version: "1.0.0",
-  description: "MCP server for Caiyun Weather API"
+  name: "caiyun-mcp-tools",
+  version: "1.1.0",
+  description: "Get weather information from Caiyun Weather API"
 });
 
 // Define Realtime Weather tool
 server.tool(
   "realtime-weather",
+  "Get real-time weather information",
   {
     longitude: z.number().describe("Longitude coordinate"),
     latitude: z.number().describe("Latitude coordinate"),
@@ -110,6 +111,7 @@ server.tool(
 // Define Hourly Forecast tool
 server.tool(
   "hourly-forecast",
+  "Get hourly weather forecast",
   {
     longitude: z.number().describe("Longitude coordinate"),
     latitude: z.number().describe("Latitude coordinate"),
@@ -152,6 +154,7 @@ server.tool(
 // Define Daily Forecast tool
 server.tool(
   "daily-forecast",
+  "Get daily weather forecast",
   {
     longitude: z.number().describe("Longitude coordinate"),
     latitude: z.number().describe("Latitude coordinate"),
@@ -190,52 +193,10 @@ server.tool(
   }
 );
 
-// Define Historical Weather tool
-server.tool(
-  "historical-weather",
-  {
-    longitude: z.number().describe("Longitude coordinate"),
-    latitude: z.number().describe("Latitude coordinate"),
-    begin: z.number().describe("Unix timestamp of the starting point for historical data"),
-    lang: z.enum(["zh_CN", "en_US", "ja"]).optional().describe("Language for response (defaults to zh_CN)")
-  },
-  async ({ longitude, latitude, begin, lang }) => {
-    try {
-      const params = {
-        hourlysteps: "24",
-        begin: begin.toString()
-      };
-      if (lang) params.lang = lang;
-      
-      const data = await callCaiyunApi("hourly", longitude, latitude, params);
-      
-      // Filter to only include the relevant result data
-      const filteredData = {
-        status: data.status,
-        hourly: data.result.hourly
-      };
-      
-      return {
-        content: [{
-          type: "text",
-          text: toCompactFormat(filteredData)
-        }]
-      };
-    } catch (error) {
-      return {
-        content: [{
-          type: "text",
-          text: `Error: ${error.message}`
-        }],
-        isError: true
-      };
-    }
-  }
-);
-
 // Define Weather Alerts tool
 server.tool(
   "weather-alerts",
+  "Get weather alerts and warnings",
   {
     longitude: z.number().describe("Longitude coordinate"),
     latitude: z.number().describe("Latitude coordinate"),
@@ -279,29 +240,20 @@ server.tool(
   }
 );
 
-// Define a prompt to help users get started with the server
-server.prompt(
-  "caiyun-weather-example",
-  {},
-  () => ({
-    messages: [{
-      role: "user",
-      content: {
-        type: "text",
-        text: `I want to get weather information using the Caiyun Weather API. Please help me formulate requests using the available tools. For example, I might want to check the current weather conditions, get an hourly forecast, or check for any active weather alerts.`
-      }
-    }]
-  })
-);
-
-// Connect to stdio transport
-async function startServer() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error(`Caiyun Weather MCP server started with stdio transport (API Key: ${CAIYUN_API_KEY ? "✓" : "✗"})`);
+// Main function to start the server
+async function main() {
+  try {
+    // Connect the server to stdio transport
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+  } catch (error) {
+    console.error("Server error:", error);
+    process.exit(1);
+  }
 }
 
-startServer().catch(error => {
-  console.error(`Server error: ${error.message}`);
+// Execute the main function
+main().catch((error) => {
+  console.error("Fatal error in main():", error);
   process.exit(1);
 }); 
